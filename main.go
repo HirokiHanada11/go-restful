@@ -49,5 +49,6 @@ func handleRequests() {
 }
 
 func main() {
+	fmt.Println("HTTP server started")
 	handleRequests()
 }
