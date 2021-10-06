@@ -25,7 +25,7 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	http.ServeFile(w, r, "index.html")
+	http.ServeFile(w, r, "../public/index.html")
 }
 
 func main() {
