@@ -8,7 +8,7 @@ import (
 	"net/http" //for using http
 
 	//local packages
-	"github.com/HirokiHanada11/go-restful/websockets"
+	"go-restful/app/websockets"
 
 	//external libraries must be donwloaded using go get command first
 	"github.com/gorilla/mux" //this external library allows you to specify http method

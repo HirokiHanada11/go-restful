@@ -1,4 +1,4 @@
-module github.com/HirokiHanada11/go-restful/websockets
+module go-restful/app/websockets
 
 go 1.17
 
