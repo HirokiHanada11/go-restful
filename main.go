@@ -8,6 +8,7 @@ import (
 	"net/http" //for using http
 
 	//local packages
+	"go-restful/app/auth"
 	"go-restful/app/websockets"
 
 	//external libraries must be donwloaded using go get command first
@@ -47,5 +48,10 @@ func main() {
 	err := http.ListenAndServe(*addr, myRouter)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
+	}
+
+	mongoErr := auth.InitMongoClient()
+	if mongoErr != nil {
+		log.Fatal("Mongo client error: ", err)
 	}
 }
