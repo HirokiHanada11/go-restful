@@ -2,6 +2,8 @@
 
 package websockets
 
+import "log"
+
 type Hub struct {
 	//map of all the registered clients
 	clients map[*Client]bool //Client struct is defined in client.go
@@ -26,12 +28,15 @@ func NewHub(id string) *Hub {
 	if hub, ok := Hubs[id]; ok {
 		return &hub
 	} else {
-		return &Hub{
+		log.Println("Creating new hub")
+		hub := Hub{
 			broadcast:  make(chan []byte),
 			register:   make(chan *Client),
 			unregister: make(chan *Client),
 			clients:    make(map[*Client]bool),
 		}
+		Hubs[id] = hub
+		return &hub
 	}
 }
 
@@ -39,6 +44,7 @@ func (h *Hub) Run() {
 	for {
 		select {
 		case client := <-h.register: //if there is a data coming through the register channel
+			log.Println("New Client registered")
 			h.clients[client] = true //activates the client by setting the client key in clients map to true
 
 		case client := <-h.unregister:

@@ -32,12 +32,27 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "../public/index.html")
 }
 
+//callback function for home route
+func serveChat(w http.ResponseWriter, r *http.Request) {
+	log.Println(r.URL)
+	if r.URL.Path != "/chat" { //checks the path
+		http.Error(w, "Not found", http.StatusNotFound)
+		return
+	}
+	if r.Method != "GET" { //checks the http method
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	http.ServeFile(w, r, "../public/chat.html")
+}
+
 func main() {
 	flag.Parse()
 
 	myRouter := mux.NewRouter().StrictSlash(true)
 
 	myRouter.HandleFunc("/", serveHome)
+	myRouter.HandleFunc("/chat", serveChat)
 	myRouter.HandleFunc("/ws/{id}", func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)                  //get the id parameter
 		websockets.ServeWs(params["id"], w, r) //defined in client.go
