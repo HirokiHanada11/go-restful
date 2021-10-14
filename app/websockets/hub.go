@@ -16,12 +16,22 @@ type Hub struct {
 	unregister chan *Client
 }
 
-func NewHub() *Hub {
-	return &Hub{
-		broadcast:  make(chan []byte),
-		register:   make(chan *Client),
-		unregister: make(chan *Client),
-		clients:    make(map[*Client]bool),
+var Hubs = make(map[string]Hub) //map of all the hubs
+
+/*
+* takes hub id retrieved from the request parameter as an argument
+* returns the pointer to the newly created hub or exisiting hub
+ */
+func NewHub(id string) *Hub {
+	if hub, ok := Hubs[id]; ok {
+		return &hub
+	} else {
+		return &Hub{
+			broadcast:  make(chan []byte),
+			register:   make(chan *Client),
+			unregister: make(chan *Client),
+			clients:    make(map[*Client]bool),
+		}
 	}
 }
 

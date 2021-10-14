@@ -32,7 +32,7 @@
             }
 
             if (window.WebSocket) {
-                conn = new WebSocket(`ws://${document.location.host}/ws`);
+                conn = new WebSocket(`ws://${document.location.host}/ws/1`);
                 conn.onclose = (event) => {
                     let item = document.createElement("div");
                     item.innerHTML = "<b>Connection closed. </b>";
@@ -100,5 +100,10 @@
         <input type="submit" value="Send" />
         <input type="text" id="msg" size="64" autofocus />
     </form>
+    <select id="select" onchange="changeRoom(this)">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+    </select>
 </body>
 </html>

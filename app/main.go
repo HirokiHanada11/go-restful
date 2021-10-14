@@ -35,16 +35,14 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 func main() {
 	flag.Parse()
 
-	hub := websockets.NewHub() //creates a new hub struct from hub.go file
-
-	go hub.Run() //calls run method defined in hub.go file
-
 	myRouter := mux.NewRouter().StrictSlash(true)
 
 	myRouter.HandleFunc("/", serveHome)
-	myRouter.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		websockets.ServeWs(hub, w, r) //defined in client.go
+	myRouter.HandleFunc("/ws/{id}", func(w http.ResponseWriter, r *http.Request) {
+		params := mux.Vars(r)                  //get the id parameter
+		websockets.ServeWs(params["id"], w, r) //defined in client.go
 	})
+
 	err := http.ListenAndServe(*addr, myRouter)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)

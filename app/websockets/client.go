@@ -117,12 +117,17 @@ func (c *Client) writePump() {
 }
 
 //serveWs handles websocket requests from the peer.
-func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
+func ServeWs(id string, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
+
+	hub := NewHub(id) //creates a new hub struct from hub.go file
+
+	go hub.Run() //calls run method defined in hub.go file
+
 	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}
 	client.hub.register <- client
 
