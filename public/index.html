@@ -19,17 +19,50 @@
                 }
             }
 
-            document.getElementById("form").onsubmit = () => {
+            const removeAllChild = () => {
+                while(log.firstChild){
+                    log.removeChild(log.firstChild);
+                }
+            }
+
+            document.getElementById("form").onsubmit = (e) => {
+                e.preventDefault();
                 if (!conn) {
                     return false;
                 }
                 if (!msg.value) {
                     return false;
                 }
-                conn.send(msg.value);
+                conn.send(JSON.stringify({
+                    user: 'User1',
+                    message: msg.value,
+                }));
                 msg.value = "";
                 return false;
             }
+
+            document.getElementById("select").addEventListener('change', (e) => {
+                e.preventDefault();
+                removeAllChild();
+                conn = new WebSocket(`ws://${document.location.host}/ws/${e.target.value}`);
+                let item = document.createElement("div");
+                item.innerText = `Connected to room ${e.target.value}`;
+                appendLog(item);
+                conn.onclose = (event) => {
+                    let item = document.createElement("div");
+                    item.innerHTML = "<b>Connection closed. </b>";
+                    appendLog(item);
+                }
+                conn.onmessage = (event) => {
+                    let messages = event.data.split("\n");
+                    messages.forEach(message => {
+                        let item = document.createElement("div");
+                        let payload = JSON.parse(message);
+                        item.innerText = `${payload.user}: ${payload.message}`;
+                        appendLog(item);
+                    });
+                }
+            });
 
             if (window.WebSocket) {
                 conn = new WebSocket(`ws://${document.location.host}/ws/1`);
@@ -42,7 +75,8 @@
                     let messages = event.data.split("\n");
                     messages.forEach(message => {
                         let item = document.createElement("div");
-                        item.innerText = message;
+                        let payload = JSON.parse(message);
+                        item.innerText = `${payload.user}: ${payload.message}`;
                         appendLog(item);
                     });
                 }
@@ -89,6 +123,16 @@
         width: 100%;
         overflow: hidden;
     }
+
+    #select {
+        padding: 0 0.5em 0 0.5em;
+        margin: 0;
+        position: absolute;
+        bottom: 1em;
+        right: 0px;
+        width: 10%;
+        overflow: hidden;
+    }
     
     </style>
 </head>
@@ -100,5 +144,10 @@
         <input type="submit" value="Send" />
         <input type="text" id="msg" size="64" autofocus />
     </form>
+    <select id="select">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+    </select>
 </body>
 </html>
